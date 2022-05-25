@@ -23,6 +23,11 @@ class SocketClass(Namespace):
             if thread is None:
                 thread = socket_app.start_background_task(background_thread)
         print('Client connected', request.sid)
+
+    def on_disconnect(self):
+        print('Client disconnected', request.sid)
+
+    def on_add_sid(self):
         id = session.get('id')
         print('ADD SID', id)
         user = db_ses.query(User).filter(User.id == id).first()
@@ -37,8 +42,7 @@ class SocketClass(Namespace):
         db_ses.commit()
         emit('user_update', {'data': str(id), 'last_seen': user.last_seen}, broadcast=True)
 
-    def on_disconnect(self):
-        print('Client disconnected', request.sid)
+    def on_delete_sid(self):
         id = session.get('id')
         print("DELETE SID", id)
         user = db_ses.query(User).filter(User.id == id).first()
