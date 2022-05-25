@@ -1,0 +1,17 @@
+from flask_restful import reqparse
+
+parser = reqparse.RequestParser()
+parser.add_argument('email', required=True)
+parser.add_argument('password', required=True)
+parser.add_argument('surname', required=True)
+parser.add_argument('name', required=True)
+parser.add_argument('birthdate', required=True)
+parser.add_argument('place_of_stay', required=True)
+parser.add_argument('place_of_born', required=True)
+parser.add_argument('age', required=True)
+parser.add_argument('status', required=True)
+parser.add_argument('avatar', required=True)
+parser.add_argument('activity_info', required=True)
+parser.add_argument('activity_to', required=True)
+parser.add_argument('last_seen', required=True)
+parser.add_argument('sid', required=True)
