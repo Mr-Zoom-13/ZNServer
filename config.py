@@ -12,7 +12,7 @@ app.config['SESSION_TYPE'] = 'filesystem'
 api = Api(app)
 Session(app)
 async_mode = None
-socket_app = SocketIO(app, async_mode=async_mode, manage_session=True)
+socket_app = SocketIO(app, async_mode=async_mode, manage_session=True, cors_allowed_origins="*")
 thread = None
 thread_lock = Lock()
 db_session.global_init('db/network.db')

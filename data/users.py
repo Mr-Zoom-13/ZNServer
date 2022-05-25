@@ -14,7 +14,7 @@ class User(SqlAlchemyBase, UserMixin, SerializerMixin):
     hashed_password = sqlalchemy.Column(sqlalchemy.String)
     surname = sqlalchemy.Column(sqlalchemy.String)
     name = sqlalchemy.Column(sqlalchemy.String)
-    birthdate = sqlalchemy.Column(sqlalchemy.Date)
+    birthdate = sqlalchemy.Column(sqlalchemy.String)
     place_of_stay = sqlalchemy.Column(sqlalchemy.String)
     place_of_born = sqlalchemy.Column(sqlalchemy.String)
     age = sqlalchemy.Column(sqlalchemy.Integer)

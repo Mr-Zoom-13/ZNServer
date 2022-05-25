@@ -2,7 +2,7 @@ from flask_restful import reqparse, abort, Api, Resource
 from flask import jsonify
 from . import db_session
 from .users import User
-from .users_parser import parser
+from .users_parser import post_parser, get_parser
 
 
 def abort_if_user_not_found(user_id):
@@ -38,30 +38,40 @@ class UsersResource(Resource):
 class UsersListResource(Resource):
     def get(self):
         db_sess = db_session.create_session()
-        users = db_sess.query(User).all()
-        return jsonify(
-            {
-                'users':
-                    [item.to_dict(only=(
-                        'id', 'email', 'surname', 'name', 'birthdate', 'place_of_stay',
-                        'place_of_born', 'age', 'status', 'avatar', 'activity_info',
-                        'activity_to',
-                        'last_seen', 'sid'))
-                        for item in users]
-            }
-        )
+        args = get_parser.parse_args()
+        if args['type'] == 'check_is_exists':
+            user = db_sess.query(User).filter(User.email == args['email']).first()
+            if not user:
+                return jsonify({'error': 'Not exists'})
+            if user.check_password(args['password']):
+                return jsonify({'success': user.to_dict(only=(
+                    'id', 'email', 'surname', 'name', 'birthdate', 'place_of_stay',
+                    'place_of_born', 'age', 'status', 'avatar', 'activity_info', 'activity_to',
+                    'last_seen', 'sid'))})
+            return jsonify({'error': 'Email exists, but incorrect password'})
+        else:
+            users = db_sess.query(User).all()
+            return jsonify(
+                {
+                    'users':
+                        [item.to_dict(only=(
+                            'id', 'email', 'surname', 'name', 'birthdate', 'place_of_stay',
+                            'place_of_born', 'age', 'status', 'avatar', 'activity_info',
+                            'activity_to',
+                            'last_seen', 'sid'))
+                            for item in users]
+                }
+            )
 
     def post(self):
         db_sess = db_session.create_session()
-        args = parser.parse_args()
+        args = post_parser.parse_args()
         if db_sess.query(User).filter(User.email == args['email']).first():
             return jsonify({'error': 'This email already exists'})
-        user = User(email=args['email'], hashed_password=['hashed_password'],
+        user = User(email=args['email'],
                     surname=args['surname'], name=args['name'], birthdate=args['birthdate'],
                     place_of_stay=args['place_of_stay'], place_of_born=args['place_of_born'],
-                    age=args['age'], status=['status'], avatar=args['avatar'],
-                    activity_info=args['activity_info'], activity_to=args['activity_to'],
-                    last_seen=args['last_seen'], sid=args['sid'])
+                    age=args['age'], status=args['status'])
         user.set_password(args['password'])
         db_sess.add(user)
         db_sess.commit()
