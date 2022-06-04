@@ -1,9 +1,17 @@
 from config import api, app, socket_app
 from flask import render_template
-from data import db_session, users_resources
+from data import db_session, users_resources, dialogs_resources
 from sockets import SocketClass
 from data.users import User
 import datetime
+
+
+@app.after_request
+def after_request(response):
+    header = response.headers
+    header['Access-Control-Allow-Origin'] = '*'
+    # Other headers can be added here if needed
+    return response
 
 
 @app.route('/')
@@ -21,6 +29,8 @@ def main():
     db_ses.commit()
     api.add_resource(users_resources.UsersListResource, '/api/v1/users')
     api.add_resource(users_resources.UsersResource, '/api/v1/users/<int:user_id>')
+    api.add_resource(dialogs_resources.DialogsListResource, '/api/v1/dialogs')
+    api.add_resource(dialogs_resources.DialogsResource, '/api/v1/dialogs/<int:dialog_id>')
     socket_app.on_namespace(SocketClass('/'))
     socket_app.run(app)
 
