@@ -21,7 +21,7 @@ class UsersResource(Resource):
             {
                 'user': user.to_dict(only=(
                     'id', 'email', 'surname', 'name', 'birthdate', 'place_of_stay',
-                    'place_of_born', 'age', 'status', 'avatar', 'activity_info', 'activity_to',
+                    'place_of_born', 'age', 'status', 'avatar', 'activity_info',
                     'last_seen', 'sid'))
             }
         )
@@ -46,7 +46,7 @@ class UsersListResource(Resource):
             if user.check_password(args['password']):
                 return jsonify({'success': user.to_dict(only=(
                     'id', 'email', 'surname', 'name', 'birthdate', 'place_of_stay',
-                    'place_of_born', 'age', 'status', 'avatar', 'activity_info', 'activity_to',
+                    'place_of_born', 'age', 'status', 'avatar', 'activity_info',
                     'last_seen', 'sid'))})
             return jsonify({'error': 'Email exists, but incorrect password'})
         else:
@@ -57,7 +57,6 @@ class UsersListResource(Resource):
                         [item.to_dict(only=(
                             'id', 'email', 'surname', 'name', 'birthdate', 'place_of_stay',
                             'place_of_born', 'age', 'status', 'avatar', 'activity_info',
-                            'activity_to',
                             'last_seen', 'sid'))
                             for item in users]
                 }

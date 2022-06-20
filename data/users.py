@@ -21,10 +21,8 @@ class User(SqlAlchemyBase, UserMixin, SerializerMixin):
     status = sqlalchemy.Column(sqlalchemy.String)
     avatar = sqlalchemy.Column(sqlalchemy.String)
     activity_info = sqlalchemy.Column(sqlalchemy.String)
-    activity_to = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('users.id'))
     last_seen = sqlalchemy.Column(sqlalchemy.String)
     sid = sqlalchemy.Column(sqlalchemy.String)
-    user = orm.relation('User')
 
     def set_password(self, password):
         self.hashed_password = generate_password_hash(password)

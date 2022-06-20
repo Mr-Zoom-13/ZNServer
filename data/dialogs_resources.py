@@ -17,10 +17,21 @@ class DialogsResource(Resource):
         abort_if_user_not_found(dialog_id)
         db_ses = db_session.create_session()
         dialog = db_ses.query(Dialog).get(dialog_id)
+        tmp_dialog = dialog.to_dict(only=(
+            'id', 'title', 'avatar'))
+        users = [item.to_dict(only=(
+            'id', 'email', 'surname', 'name', 'birthdate', 'place_of_stay',
+            'place_of_born', 'age', 'status', 'avatar', 'activity_info',
+            'last_seen', 'sid'))
+            for item in dialog.users]
+        messages = [item.to_dict(only=(
+            'id', 'user_id', 'dialog_id', 'text', 'date', 'was_read'))
+            for item in dialog.messages]
+        tmp_dialog['users'] = users
+        tmp_dialog['messages'] = messages
         return jsonify(
             {
-                'dialog': dialog.to_dict(only=(
-                    'id', 'title', 'avatar', 'users'))
+                'dialog': tmp_dialog
             }
         )
 
@@ -38,18 +49,21 @@ class DialogsListResource(Resource):
         db_sess = db_session.create_session()
         dialogs = db_sess.query(Dialog).all()
         dialogs_ready = []
-        for i in dialogs:
-            print(i.users)
-            some_dialog = i.to_dict(only=(
+        for dialog in dialogs:
+            print(dialog.users)
+            tmp_dialog = dialog.to_dict(only=(
                     'id', 'title', 'avatar'))
-            some_users = [item.to_dict(only=(
+            users = [item.to_dict(only=(
                             'id', 'email', 'surname', 'name', 'birthdate', 'place_of_stay',
                             'place_of_born', 'age', 'status', 'avatar', 'activity_info',
-                            'activity_to',
                             'last_seen', 'sid'))
-                            for item in i.users]
-            some_dialog['users'] = some_users
-            dialogs_ready.append(some_dialog)
+                            for item in dialog.users]
+            messages = [item.to_dict(only=(
+                            'id', 'user_id', 'dialog_id', 'text', 'date', 'was_read'))
+                            for item in dialog.messages]
+            tmp_dialog['users'] = users
+            tmp_dialog['messages'] = messages
+            dialogs_ready.append(tmp_dialog)
         return jsonify(
             {
                 'dialogs': dialogs_ready
